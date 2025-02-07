@@ -1,0 +1,102 @@
+# ===========================================================================
+#
+#                            PUBLIC DOMAIN NOTICE
+#               National Center for Biotechnology Information
+#
+#  This software/database is a "United States Government Work" under the
+#  terms of the United States Copyright Act.  It was written as part of
+#  the author's official duties as a United States Government employee and
+#  thus cannot be copyrighted.  This software/database is freely available
+#  to the public for use. The National Library of Medicine and the U.S.
+#  Government have not placed any restriction on its use or reproduction.
+#
+#  Although all reasonable efforts have been taken to ensure the accuracy
+#  and reliability of the software and data, the NLM and the U.S.
+#  Government do not and cannot warrant the performance or results that
+#  may be obtained by using this software or data. The NLM and the U.S.
+#  Government disclaim all warranties, express or implied, including
+#  warranties of performance, merchantability or fitness for any particular
+#  purpose.
+#
+#  Please cite the author in any work or product based on this material.
+#
+# ===========================================================================
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+
+if ( ${OS}-${CMAKE_CXX_COMPILER_ID} STREQUAL "linux-GNU"  )
+    # need explicit libgcc to prevent picking up certain names from libg++
+    set( MBEDTLS_LIBS ${MBEDTLS_LIBS};gcc )
+endif()
+
+#################################
+set( VDB_LIB_RD "" )
+foreach( target ${VDB_LIB_RD_TARGETS})
+    list( APPEND VDB_LIB_RD "$<TARGET_OBJECTS:${target}>" )
+endforeach()
+set( VDB_LIB_RDWR "" )
+foreach( target ${VDB_LIB_RDWR_TARGETS})
+    list( APPEND VDB_LIB_RDWR "$<TARGET_OBJECTS:${target}>" )
+endforeach()
+
+if(_NCBIVDB_CFG_PACKAGING)
+    if (BUILD_SHARED_LIBS)
+        add_library( ncbi-vdb SHARED "${VDB_LIB_RD}" )
+        add_library( ncbi-wvdb SHARED "${VDB_LIB_RDWR}" )
+    else()
+        add_library( ncbi-vdb STATIC "${VDB_LIB_RD}" )
+        add_library( ncbi-wvdb STATIC "${VDB_LIB_RDWR}" )
+    endif()
+    set( _extra_libs ${CONAN_LIBS};m;dl;pthread)
+    target_link_libraries( ncbi-vdb  ${_extra_libs} )
+    target_link_libraries( ncbi-wvdb  ${_extra_libs} )
+    install(TARGETS ncbi-vdb ncbi-wvdb)
+else()
+
+add_library( ncbi-vdb STATIC "${VDB_LIB_RD}" )
+ExportStatic( ncbi-vdb true )
+ExportShared( ncbi-vdb true "m;dl;pthread;${MBEDTLS_LIBS}")
+
+################################
+
+add_library( ncbi-wvdb STATIC "${VDB_LIB_RDWR}" )
+ExportStatic( ncbi-wvdb true )
+ExportShared( ncbi-wvdb true "m;dl;pthread;${MBEDTLS_LIBS}")
+
+if( RUN_SANITIZER_TESTS )
+    set( asan_defs "-fsanitize=address" )
+    set( VDB_LIB_RD_ASAN "" )
+    foreach( target ${VDB_LIB_RD_TARGETS})
+        list( APPEND VDB_LIB_RD_ASAN "$<TARGET_OBJECTS:${target}-asan>" )
+    endforeach()
+    add_library( ncbi-vdb-asan STATIC "${VDB_LIB_RD_ASAN}" )
+    target_compile_options( ncbi-vdb-asan PRIVATE ${asan_defs} )
+    target_link_options( ncbi-vdb-asan PRIVATE ${asan_defs} )
+
+    set( tsan_defs "-fsanitize=thread" )
+    set( VDB_LIB_RD_TSAN "" )
+    foreach( target ${VDB_LIB_RD_TARGETS})
+        list( APPEND VDB_LIB_RD_TSAN "$<TARGET_OBJECTS:${target}-tsan>" )
+    endforeach()
+    add_library( ncbi-vdb-tsan STATIC "${VDB_LIB_RD_TSAN}" )
+    target_compile_options( ncbi-vdb-tsan PRIVATE ${tsan_defs} )
+    target_link_options( ncbi-vdb-tsan PRIVATE ${tsan_defs} )
+
+    ################################
+    set( VDB_LIB_RDWR_ASAN "" )
+    foreach( target ${VDB_LIB_RDWR_TARGETS})
+        list( APPEND VDB_LIB_RDWR_ASAN "$<TARGET_OBJECTS:${target}-asan>" )
+    endforeach()
+    add_library( ncbi-wvdb-asan STATIC "${VDB_LIB_RDWR_ASAN}" )
+    target_compile_options( ncbi-wvdb-asan PRIVATE ${asan_defs} )
+    target_link_options( ncbi-wvdb-asan PRIVATE ${asan_defs} )
+
+    set( VDB_LIB_RDWR_TSAN "" )
+    foreach( target ${VDB_LIB_RDWR_TARGETS})
+        list( APPEND VDB_LIB_RDWR_TSAN "$<TARGET_OBJECTS:${target}-tsan>" )
+    endforeach()
+    add_library( ncbi-wvdb-tsan STATIC "${VDB_LIB_RDWR_TSAN}" )
+    target_compile_options( ncbi-wvdb-tsan PRIVATE ${tsan_defs} )
+    target_link_options( ncbi-wvdb-tsan PRIVATE ${tsan_defs} )
+endif()
+endif()

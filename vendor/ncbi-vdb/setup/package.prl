@@ -1,0 +1,45 @@
+################################################################################
+sub PACKAGE      { 'ncbi-vdb' }
+sub PACKAGE_TYPE { 'L' }
+sub PACKAGE_NAME { 'NCBI-VDB' }
+sub PACKAGE_NAMW { 'VDB' }
+sub CONFIG_OUT   { 'build' }
+sub PKG { my @REQ = qw ( cmake );
+          ( LNG   => 'C',
+            OUT   => 'ncbi-outdir',
+            LOCOUT=> '../../OUTDIR',
+            PATH  => '/usr/local/ncbi/ncbi-vdb',
+            UPATH =>      '$HOME/ncbi/ncbi-vdb',
+            REQ   => \@REQ, ) }
+sub DEPENDS { ( { name => 'fuse' , Include => '/usr/include'        , },
+                { name => 'hdf5' , Include => '/usr/include'        , },
+                { name => 'magic', Include => '/usr/include'        , },
+                { name => 'xml2' , Include => '/usr/include/libxml2', } ) }
+sub REQ { ( { name    => 'hdf5',
+              option  => 'with-hdf5-prefix',
+              origin  => 'E',
+              type    => 'LIO',
+              pkgpath => '/usr',
+              usrpath => '$HOME',
+              include => 'hdf5.h',
+              lib     => 'libhdf5.a',
+            },
+            { name    => 'magic',
+              option  => 'with-magic-prefix',
+              origin  => 'E',
+              type    => 'LIO',
+              pkgpath => '/usr',
+              usrpath => '$HOME',
+              include => 'magic.h',
+              lib     => 'libmagic.so',
+            },
+            { name    => 'xml2',
+              option  => 'with-xml2-prefix',
+              origin  => 'E',
+              type    => 'LIO',
+              pkgpath => '/usr',
+              usrpath => '$HOME',
+              include => 'libxml2/xmlreader.h',
+              lib     => 'libxml2.a',
+        } ) }
+1
