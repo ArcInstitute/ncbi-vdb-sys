@@ -40,6 +40,7 @@ You can also access the `SegmentType` to determine if it is a biological read or
 
 For a simple example of how you can use the library, see the `examples` directory.
 I've implemented a basic `fastq-dump` style tool that will extract all records from an SRA archive and write them to stdout.
+This also supports specifying a range of records to extract.
 
 ```bash
 git clone https://github.com/noamteyssier/ncbi-vdb
@@ -57,6 +58,8 @@ It was written for a specific use-case and may not support all possible SRA arch
 
 Note that this will build the `ncbi-vdb` C-library as a static library and link against it.
 This may make your resulting binary system-specific and may not work on all systems (will be limited to what ncbi-vdb can be built on).
+
+Note: Interfacing with the underlying C-library is unsafe. This library is not fully tested against all possible edge-cases so while it should be safe to use, there may be bugs.
 
 ## Contributing
 
