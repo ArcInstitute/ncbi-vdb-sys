@@ -1,11 +1,20 @@
 [package]
-name = "ncbi-vdb-ffi"
+name = "ncbi-vdb"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+thiserror = "2.0.11"
+
+[dev-dependencies]
+anyhow = "1.0.95"
+clap = { version = "4.5.28", features = ["derive"] }
 
 [build-dependencies]
 cc = "1.2.12"
 num_cpus = "1.16.0"
 walkdir = "2.5.0"
+
+[profile.release]
+lto = true
+codegen-units = 1

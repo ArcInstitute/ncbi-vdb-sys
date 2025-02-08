@@ -3,3 +3,4 @@ Cargo.lock
 
 vendor/ncbi-vdb/comp/**
 vendor/ncbi-vdb/reconfigure
+SRR*.sra
