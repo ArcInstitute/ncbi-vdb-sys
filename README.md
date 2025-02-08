@@ -55,4 +55,9 @@ target/release/examples/dump <path/to/sra/file.sra>
 This library is not meant to be a complete feature-for-feature replacement for the `ncbi-vdb` C-library.
 It was written for a specific use-case and may not support all possible SRA archive layouts.
 
+Note that this will build the `ncbi-vdb` C-library as a static library and link against it.
+This may make your resulting binary system-specific and may not work on all systems (will be limited to what ncbi-vdb can be built on).
+
+## Contributing
+
 If you have a specific use-case that is not supported by this library, please open an issue or a pull request.
