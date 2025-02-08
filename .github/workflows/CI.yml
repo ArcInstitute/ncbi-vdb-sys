@@ -1,0 +1,27 @@
+name: Rust
+
+on: push
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  ci:
+    needs: [build]
+    name: CI
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Done
+        run: exit 0
+
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --verbose
