@@ -117,6 +117,21 @@ impl<'a> RefRecord<'a> {
     pub fn into_iter(self) -> SegmentIter<'a> {
         SegmentIter::new(self)
     }
+
+    pub fn get_segment(&self, index: usize) -> Option<Segment<'a>> {
+        if index >= self.read_starts.len() {
+            return None;
+        }
+        let start = self.read_starts[index] as usize;
+        let len = self.read_lens[index] as usize;
+        Some(Segment {
+            rid: self.rid,
+            sid: index,
+            seq: &self.seq[start..start + len],
+            qual: &self.qual[start..start + len],
+            ty: self.read_types[index].into(),
+        })
+    }
 }
 
 pub struct Segment<'a> {
@@ -210,18 +225,7 @@ impl<'a> SegmentIter<'a> {
 impl<'a> Iterator for SegmentIter<'a> {
     type Item = Segment<'a>;
     fn next(&mut self) -> Option<Self::Item> {
-        if self.pos >= self.record.read_starts.len() {
-            return None;
-        }
-        let start = self.record.read_starts[self.pos] as usize;
-        let len = self.record.read_lens[self.pos] as usize;
-        let segment = Segment {
-            rid: self.record.rid,
-            sid: self.pos,
-            seq: &self.record.seq[start..start + len],
-            qual: &self.record.qual[start..start + len],
-            ty: self.record.read_types[self.pos].into(),
-        };
+        let segment = self.record.get_segment(self.pos)?;
         self.pos += 1;
         Some(segment)
     }
