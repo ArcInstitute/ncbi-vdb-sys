@@ -144,7 +144,10 @@ extern z_const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 #      include <unix.h> /* for fdopen */
 #    else
 #      ifndef fdopen
+#        if !defined(__APPLE__) || !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED < 150000
+         /* Only define fdopen as NULL on older macOS versions */
 #        define fdopen(fd,mode) NULL /* No fdopen() */
+#        endif
 #      endif
 #    endif
 #  endif
