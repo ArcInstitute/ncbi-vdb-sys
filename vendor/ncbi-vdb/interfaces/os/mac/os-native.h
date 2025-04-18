@@ -66,6 +66,7 @@ char *strndup ( const char *str, size_t n )
 }
 #endif
 
+#if !defined(__APPLE__) || !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED < 150000
 /*--------------------------------------------------------------------------
  * strchrnul - implemented inline here
  */
@@ -77,6 +78,8 @@ char *strchrnul ( const char *str, int c )
         ( void ) 0;
     return & ( ( char* ) str ) [ i ];
 }
+#endif
+
 
 /*--------------------------------------------------------------------------
  * memchr - implemented inline here
