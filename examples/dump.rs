@@ -2,7 +2,7 @@ use std::io::{stdout, BufWriter, Write};
 
 use anyhow::Result;
 use clap::Parser;
-use ncbi_vdb::{Segment, SraReader};
+use ncbi_vdb_sys::{Segment, SraReader};
 
 #[derive(Parser)]
 pub struct Cli {

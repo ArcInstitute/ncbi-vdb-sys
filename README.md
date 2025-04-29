@@ -1,6 +1,6 @@
-# ncbi-vdb
+# ncbi-vdb-sys
 
-This crate provides FFIs for the ncbi-vdb C-library.
+This crate provides FFIs for the [`ncbi-vdb`](https://github.com/ncbi/ncbi-vdb) C-library.
 
 It provides a safe and structured way to interact with the SRA file format (Sequence Read Archive).
 
@@ -14,7 +14,7 @@ The library is designed around `Record` and `Segment` Iterators.
 
 ```rust
 
-use ncbi_vdb::{SraReader, Result};
+use ncbi_vdb_sys::{SraReader, Result};
 
 fn main() -> Result<()> {
     let path = "path/to/sra/file.sra";
@@ -43,8 +43,8 @@ I've implemented a basic `fastq-dump` style tool that will extract all records f
 This also supports specifying a range of records to extract.
 
 ```bash
-git clone https://github.com/noamteyssier/ncbi-vdb
-cd ncbi-vdb
+git clone https://github.com/arcinstitute/ncbi-vdb-sys
+cd ncbi-vdb-sys
 cargo build --release --examples dump
 
 # Run the example
