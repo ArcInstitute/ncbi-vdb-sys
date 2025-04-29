@@ -1,5 +1,10 @@
 # ncbi-vdb-sys
 
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md)
+![actions status](https://github.com/arcinstitute/ncbi-vdb-sys/workflows/CI/badge.svg)
+[![Crates.io](https://img.shields.io/crates/d/ncbi-vdb-sys?color=orange&label=crates.io)](https://crates.io/crates/ncbi-vdb-sys)
+[![docs.rs](https://img.shields.io/docsrs/ncbi-vdb-sys?color=green&label=docs.rs)](https://docs.rs/ncbi-vdb-sys/latest/ncbi-vdb-sys/)
+
 This crate provides FFIs for the [`ncbi-vdb`](https://github.com/ncbi/ncbi-vdb) C-library.
 
 It provides a safe and structured way to interact with the SRA file format (Sequence Read Archive).
