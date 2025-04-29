@@ -11,6 +11,10 @@ fn find_static_lib(start_dir: &Path, lib_name: &str) -> Option<PathBuf> {
 }
 
 fn main() {
+    if std::env::var("DOCS_RS").is_ok() {
+        return;
+    }
+
     let ncbi_dir = Path::new("vendor/ncbi-vdb");
 
     // Only rerun if specific files change
