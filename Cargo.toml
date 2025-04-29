@@ -2,6 +2,13 @@
 name = "ncbi-vdb-sys"
 version = "0.1.4"
 edition = "2021"
+description = "FFI library for the NCBI VDB"
+license = "MIT"
+authors = ["Noam Teyssier <noam.teyssier@arcinstitute.org>"]
+repository = "https://github.com/arcinstitute/ncbi-vdb-sys"
+documentation = "https://docs.rs/ncbi-vdb-sys"
+categories = ["science::bioinformatics"]
+keywords = ["bioinformatics", "nucleotide", "sequencing", "genomics", "SRA"]
 
 [dependencies]
 thiserror = "2.0.11"
