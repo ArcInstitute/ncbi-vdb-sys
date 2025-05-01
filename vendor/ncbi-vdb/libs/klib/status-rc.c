@@ -45,7 +45,7 @@
 
 static size_t measure(char const *const str) {
   assert(str != NULL);
-  return (size_t)(ncbi_strchrnul(str, ' ') - str);
+  return (size_t)(strchrnul(str, ' ') - str);
 }
 
 static char const *const INVALID = "INVALID";
