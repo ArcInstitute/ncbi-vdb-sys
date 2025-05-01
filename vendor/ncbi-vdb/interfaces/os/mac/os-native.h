@@ -62,7 +62,7 @@ static __inline__ char *strndup(const char *str, size_t n) {
 }
 #endif
 
-#if !defined(__APPLE__) || !defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+#if !defined(__APPLE__) && !defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 /*--------------------------------------------------------------------------
  * strchrnul - implemented inline here
  */
