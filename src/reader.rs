@@ -1,5 +1,5 @@
 use crate::safe::vdb::{FastqCursor, SafeVTable};
-use crate::{Error, Result};
+use crate::{Error, ParallelProcessor, ParallelReader, Result};
 
 pub const BUFFER_SIZE: usize = 1024 * 1024; // 1MB buffer
 
@@ -8,6 +8,7 @@ pub struct SraReader {
     start: i64,
     stop: u64,
     pos: i64,
+    path: String,
 }
 impl SraReader {
     pub fn new(path: &str) -> Result<Self> {
@@ -19,6 +20,7 @@ impl SraReader {
             start,
             stop,
             pos: start,
+            path: path.to_string(),
         })
     }
     pub fn with_capacity(path: &str, capacity: usize) -> Result<Self> {
@@ -30,6 +32,7 @@ impl SraReader {
             start,
             stop,
             pos: start,
+            path: path.to_string(),
         })
     }
     pub fn start(&self) -> i64 {
@@ -70,6 +73,68 @@ impl SraReader {
             ));
         }
         Ok(RecordIter::new_range(self, start, stop))
+    }
+}
+
+impl ParallelReader for SraReader {
+    fn process_parallel<P: ParallelProcessor + Clone + 'static>(
+        self,
+        processor: P,
+        num_threads: u64,
+    ) -> Result<()> {
+        let total_records = self.stop();
+        let records_per_thread = total_records / num_threads;
+        let remainder = total_records % num_threads;
+        let mut handles = Vec::new();
+
+        for i in 0..num_threads {
+            // Identify the start location of the reader
+            let start = (i * records_per_thread) + 1;
+
+            // Identify the stop location of the reader
+            let stop = if i == num_threads - 1 {
+                start + records_per_thread + remainder - 1
+            } else {
+                start + records_per_thread - 1
+            };
+
+            // clone the accession path
+            let path = self.path.clone();
+
+            // clone the processor
+            let mut proc = processor.clone();
+
+            let handle = std::thread::spawn(move || -> Result<()> {
+                // Inititalize a thread-specific reader
+                let reader = SraReader::new(&path)?;
+
+                // Iterate over record spots and write to buffers
+                for (idx, record) in reader.into_range_iter(start as i64, stop)?.enumerate() {
+                    let record = record?;
+
+                    proc.process_record(record)?;
+
+                    if idx % proc.set_batch_size() == 0 {
+                        proc.on_batch_complete()?;
+                    }
+                }
+
+                // process final batch
+                proc.on_batch_complete()?;
+
+                Ok(())
+            });
+
+            // Collect all thread handles
+            handles.push(handle);
+        }
+
+        // Join all handles
+        for handle in handles {
+            handle.join().expect("Error joining handle")?;
+        }
+
+        Ok(())
     }
 }
 
