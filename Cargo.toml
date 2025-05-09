@@ -20,7 +20,3 @@ clap = { version = "4.5.28", features = ["derive"] }
 [build-dependencies]
 num_cpus = "1.16.0"
 walkdir = "2.5.0"
-
-[profile.release]
-lto = true
-codegen-units = 1
