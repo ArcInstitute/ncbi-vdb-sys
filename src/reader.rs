@@ -41,7 +41,7 @@ impl SraReader {
     pub fn pos(&self) -> i64 {
         self.pos
     }
-    pub fn get_record(&self, row_id: i64) -> Result<RefRecord> {
+    pub fn get_record(&self, row_id: i64) -> Result<RefRecord<'_>> {
         let rid = row_id as usize;
         let seq = self.cursor.get_read(row_id)?;
         let qual = self.cursor.get_qual(row_id)?;
@@ -57,10 +57,10 @@ impl SraReader {
             read_types,
         })
     }
-    pub fn into_iter(&self) -> RecordIter {
+    pub fn into_iter(&self) -> RecordIter<'_> {
         RecordIter::new(self)
     }
-    pub fn into_range_iter(&self, start: i64, stop: u64) -> Result<RecordIter> {
+    pub fn into_range_iter(&self, start: i64, stop: u64) -> Result<RecordIter<'_>> {
         if start < self.start() || stop > self.stop() || start > stop as i64 {
             return Err(Error::CursorRangeError(
                 start as usize,
