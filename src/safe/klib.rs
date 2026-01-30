@@ -21,6 +21,7 @@ impl SafeKDirectory {
 }
 
 // Safe wrapper over `KNamelist`
+#[allow(dead_code)]
 pub struct SafeKNamelist(pub(crate) *mut KNamelist);
 impl Drop for SafeKNamelist {
     fn drop(&mut self) {
