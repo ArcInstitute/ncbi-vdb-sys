@@ -62,16 +62,19 @@ static __inline__ char *strndup(const char *str, size_t n) {
 }
 #endif
 
-#if !defined(__MAC_15_4) || (__MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_15_4)
+#if !defined(__MAC_15_4) || (__MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_15_4)
 /*--------------------------------------------------------------------------
  * strchrnul - implemented inline here
+ * Note: macOS 15.4+ provides strchrnul in the system headers, so we only
+ * define our own implementation for older versions.
  */
-static __inline__ char *strchrnul(const char *str, int c) {
+static __inline__ char *ncbi_strchrnul(const char *str, int c) {
   int i;
   for (i = 0; str[i] != 0 && str[i] != c; ++i)
     (void)0;
   return &((char *)str)[i];
 }
+#define strchrnul ncbi_strchrnul
 #endif
 
 /*--------------------------------------------------------------------------
